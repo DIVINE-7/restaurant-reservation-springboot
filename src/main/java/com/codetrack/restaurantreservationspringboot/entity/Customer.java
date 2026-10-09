@@ -1,20 +1,18 @@
 package com.codetrack.restaurantreservationspringboot.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
-import java.time.LocalTime;
-
 @Entity
-@Table(name = "restaurants")
+@Table(name = "customers")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Restaurant {
+public class Customer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,19 +20,15 @@ public class Restaurant {
 
     @NotBlank
     @Column(nullable = false)
-    private String name;
+    private String fullName;
 
+    @Email
     @NotBlank
+    @Column(nullable = false, unique = true)
+    private String email;
+
     @Column(nullable = false)
-    private String address;
+    private String password;
 
     private String phone;
-
-    @Size(max = 1000)
-    @Column(length = 1000)
-    private String description;
-
-    private LocalTime openingTime;
-
-    private LocalTime closingTime;
 }

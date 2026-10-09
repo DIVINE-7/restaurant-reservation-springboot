@@ -2,7 +2,8 @@ package com.codetrack.restaurantreservationspringboot.controller;
 
 import com.codetrack.restaurantreservationspringboot.entity.Restaurant;
 import com.codetrack.restaurantreservationspringboot.service.RestaurantService;
-import org.springframework.http.ResponseEntity;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,54 +12,39 @@ import java.util.List;
 @RequestMapping("/api/restaurants")
 public class RestaurantController {
 
-    private final RestaurantService restaurantService;
+    private final RestaurantService service;
 
-    public RestaurantController(RestaurantService restaurantService) {
-        this.restaurantService = restaurantService;
-    }
-
-    @PostMapping
-    public ResponseEntity<Restaurant> createRestaurant(
-            @RequestBody Restaurant restaurant) {
-
-        return ResponseEntity.ok(
-                restaurantService.createRestaurant(restaurant)
-        );
+    public RestaurantController(RestaurantService service) {
+        this.service = service;
     }
 
     @GetMapping
-    public ResponseEntity<List<Restaurant>> getAllRestaurants() {
-
-        return ResponseEntity.ok(
-                restaurantService.getAllRestaurants()
-        );
+    public List<Restaurant> getAll(
+            @RequestParam(required = false) String search) {
+        return service.getAll(search);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Restaurant> getRestaurantById(
-            @PathVariable Long id) {
+    public Restaurant getById(@PathVariable Long id) {
+        return service.getById(id);
+    }
 
-        return restaurantService.getRestaurantById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Restaurant create(@Valid @RequestBody Restaurant restaurant) {
+        return service.create(restaurant);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Restaurant> updateRestaurant(
+    public Restaurant update(
             @PathVariable Long id,
-            @RequestBody Restaurant restaurant) {
-
-        return ResponseEntity.ok(
-                restaurantService.updateRestaurant(id, restaurant)
-        );
+            @Valid @RequestBody Restaurant restaurant) {
+        return service.update(id, restaurant);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteRestaurant(
-            @PathVariable Long id) {
-
-        restaurantService.deleteRestaurant(id);
-
-        return ResponseEntity.noContent().build();
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
+        service.delete(id);
     }
 }

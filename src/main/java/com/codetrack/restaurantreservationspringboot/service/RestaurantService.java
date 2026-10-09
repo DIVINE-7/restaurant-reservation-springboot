@@ -1,54 +1,18 @@
 package com.codetrack.restaurantreservationspringboot.service;
 
 import com.codetrack.restaurantreservationspringboot.entity.Restaurant;
-import com.codetrack.restaurantreservationspringboot.repository.RestaurantRepository;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
-@Service
-public class RestaurantService {
+public interface RestaurantService {
 
-    private final RestaurantRepository restaurantRepository;
+    List<Restaurant> getAll(String search);
 
-    public RestaurantService(RestaurantRepository restaurantRepository) {
-        this.restaurantRepository = restaurantRepository;
-    }
+    Restaurant getById(Long id);
 
-    public Restaurant createRestaurant(Restaurant restaurant) {
-        return restaurantRepository.save(restaurant);
-    }
+    Restaurant create(Restaurant restaurant);
 
-    public List<Restaurant> getAllRestaurants() {
-        return restaurantRepository.findAll();
-    }
+    Restaurant update(Long id, Restaurant restaurant);
 
-    public Optional<Restaurant> getRestaurantById(Long id) {
-        return restaurantRepository.findById(id);
-    }
-
-    public Restaurant updateRestaurant(Long id, Restaurant updatedRestaurant) {
-
-        Restaurant existingRestaurant = restaurantRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Restaurant not found"));
-
-        existingRestaurant.setName(updatedRestaurant.getName());
-        existingRestaurant.setAddress(updatedRestaurant.getAddress());
-        existingRestaurant.setPhone(updatedRestaurant.getPhone());
-        existingRestaurant.setDescription(updatedRestaurant.getDescription());
-        existingRestaurant.setOpeningTime(updatedRestaurant.getOpeningTime());
-        existingRestaurant.setClosingTime(updatedRestaurant.getClosingTime());
-
-        return restaurantRepository.save(existingRestaurant);
-    }
-
-    public void deleteRestaurant(Long id) {
-
-        if (!restaurantRepository.existsById(id)) {
-            throw new RuntimeException("Restaurant not found");
-        }
-
-        restaurantRepository.deleteById(id);
-    }
+    void delete(Long id);
 }
