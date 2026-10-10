@@ -1,18 +1,20 @@
+
 package com.codetrack.restaurantreservationspringboot.service;
 
 import com.codetrack.restaurantreservationspringboot.entity.Restaurant;
-
 import java.util.List;
 
 public interface RestaurantService {
 
-    List<Restaurant> getAll(String search);
+    List<Restaurant> getAllRestaurants();
 
-    Restaurant getById(Long id);
+    Restaurant getRestaurantById(Long id);
 
-    Restaurant create(Restaurant restaurant);
+    List<Restaurant> searchRestaurants(String name, String address);
 
-    Restaurant update(Long id, Restaurant restaurant);
+    Restaurant createRestaurant(Restaurant restaurant);
 
-    void delete(Long id);
+    Restaurant updateRestaurant(Long id, Restaurant restaurant);
+
+    void deleteRestaurant(Long id);
 }
