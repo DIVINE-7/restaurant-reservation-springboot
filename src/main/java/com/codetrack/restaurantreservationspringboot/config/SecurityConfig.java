@@ -1,4 +1,3 @@
-
 package com.codetrack.restaurantreservationspringboot.config;
 
 import java.util.List;
@@ -26,8 +25,8 @@ public class SecurityConfig {
     private String allowedOrigin;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http)
-            throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http) throws Exception {
 
         http
                 .csrf(csrf -> csrf.disable())
@@ -36,6 +35,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(
                                 org.springframework.http.HttpMethod.GET,
+                                "/api/restaurants",
                                 "/api/restaurants/**"
                         ).permitAll()
                         .anyRequest().authenticated()
@@ -65,6 +65,7 @@ public class SecurityConfig {
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowedOrigins(List.of(allowedOrigin));
