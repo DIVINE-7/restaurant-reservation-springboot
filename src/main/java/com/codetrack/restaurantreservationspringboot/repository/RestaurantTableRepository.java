@@ -9,4 +9,6 @@ public interface RestaurantTableRepository
         extends JpaRepository<RestaurantTable, Long> {
 
     List<RestaurantTable> findByRestaurantIdAndActiveTrue(Long restaurantId);
+
+    List<RestaurantTable> findByActiveTrue();
 }

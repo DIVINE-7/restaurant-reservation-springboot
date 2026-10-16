@@ -8,6 +8,10 @@ import java.util.List;
 
 public interface QueueService {
 
+    List<QueueEntry> getAllRestaurantQueue(Long restaurantId);
+
+    QueueEntry assignTable(Long queueId, Long tableId);
+
     QueueEntry joinQueue(Long customerId, Long restaurantId, int guests);
 
     List<QueueEntry> getRestaurantQueue(Long restaurantId);

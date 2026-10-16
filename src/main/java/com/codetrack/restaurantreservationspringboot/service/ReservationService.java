@@ -13,9 +13,11 @@ public interface ReservationService {
     Reservation getReservationById(Long id);
 
     List<Reservation> getReservationsByCustomer(Long customerId);
+    List<Reservation> getAllReservations();
 
     Reservation updateReservationStatus(
             Long id, ReservationStatus status);
 
     Reservation cancelReservation(Long id);
+
 }

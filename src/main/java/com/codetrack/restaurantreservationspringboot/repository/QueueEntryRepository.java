@@ -1,4 +1,3 @@
-
 package com.codetrack.restaurantreservationspringboot.repository;
 
 import com.codetrack.restaurantreservationspringboot.entity.QueueEntry;
@@ -11,11 +10,13 @@ public interface QueueEntryRepository
         extends JpaRepository<QueueEntry, Long> {
 
     List<QueueEntry> findByRestaurantIdAndStatusOrderByJoinedAtAsc(
-            Long restaurantId,
-            QueueStatus status
-    );
+            Long restaurantId, QueueStatus status);
+
+    List<QueueEntry> findByRestaurantIdOrderByJoinedAtAsc(
+            Long restaurantId);
 
     List<QueueEntry> findByCustomerIdOrderByJoinedAtDesc(
-            Long customerId
-    );
+            Long customerId);
+
+    long countByStatus(QueueStatus status);
 }

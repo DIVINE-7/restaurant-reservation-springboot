@@ -13,6 +13,10 @@ public class QueueEntry {
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "table_id")
+    private RestaurantTable table;
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
@@ -37,7 +41,13 @@ public class QueueEntry {
 
     public QueueEntry() {
     }
+    public RestaurantTable getTable() {
+        return table;
+    }
 
+    public void setTable(RestaurantTable table) {
+        this.table = table;
+    }
     public Long getId() {
         return id;
     }

@@ -38,6 +38,13 @@ public class ReservationController {
                 r.getCreatedAt()
         );
     }
+    @GetMapping
+    public List<ReservationResponse> getAll() {
+        return reservationService.getAllReservations()
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

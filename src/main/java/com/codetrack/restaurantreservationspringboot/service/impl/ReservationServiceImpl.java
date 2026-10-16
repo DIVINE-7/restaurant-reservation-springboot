@@ -34,7 +34,14 @@ public class ReservationServiceImpl implements ReservationService {
         this.restaurantRepository = restaurantRepository;
         this.tableRepository = tableRepository;
     }
-
+    @Override
+    @Transactional(readOnly = true)
+    public List<Reservation> getAllReservations() {
+        return reservationRepository.findAll()
+                .stream()
+                .sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()))
+                .toList();
+    }
     @Override
     public Reservation createReservation(ReservationRequest request) {
 
@@ -117,18 +124,41 @@ public class ReservationServiceImpl implements ReservationService {
     public Reservation updateReservationStatus(
             Long id, ReservationStatus status) {
 
-        Reservation reservation = getReservationById(id);
-
-        if (reservation.getStatus() == ReservationStatus.CANCELLED
-                || reservation.getStatus() == ReservationStatus.COMPLETED
-                || reservation.getStatus() == ReservationStatus.NO_SHOW) {
+        if (status == null) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "Cannot change a terminal reservation");
+                    "Status is required");
+        }
+
+        Reservation reservation = getReservationById(id);
+        ReservationStatus current = reservation.getStatus();
+
+        boolean allowed = switch (current) {
+            case PENDING ->
+                    status == ReservationStatus.CONFIRMED
+                            || status == ReservationStatus.REJECTED
+                            || status == ReservationStatus.CANCELLED;
+
+            case CONFIRMED ->
+                    status == ReservationStatus.CHECKED_IN
+                            || status == ReservationStatus.CANCELLED
+                            || status == ReservationStatus.NO_SHOW;
+
+            case CHECKED_IN ->
+                    status == ReservationStatus.COMPLETED
+                            || status == ReservationStatus.NO_SHOW;
+
+            case COMPLETED, CANCELLED, REJECTED, NO_SHOW -> false;
+        };
+
+        if (!allowed) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Invalid reservation status transition: "
+                            + current + " -> " + status);
         }
 
         reservation.setStatus(status);
-
         return reservationRepository.save(reservation);
     }
 
@@ -139,7 +169,9 @@ public class ReservationServiceImpl implements ReservationService {
 
         if (reservation.getStatus() == ReservationStatus.COMPLETED
                 || reservation.getStatus() == ReservationStatus.CANCELLED
+                || reservation.getStatus() == ReservationStatus.REJECTED
                 || reservation.getStatus() == ReservationStatus.NO_SHOW) {
+
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "Reservation cannot be cancelled");

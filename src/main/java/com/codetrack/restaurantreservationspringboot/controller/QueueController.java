@@ -14,6 +14,25 @@ import java.util.List;
 @RequestMapping("/api/queue")
 public class QueueController {
 
+    public record AssignTableRequest(Long tableId) {}
+    @GetMapping("/restaurant/{restaurantId}/all")
+    public List<QueueEntry> getAllRestaurantQueue(
+            @PathVariable Long restaurantId) {
+        return queueService.getAllRestaurantQueue(restaurantId);
+    }
+
+    @PatchMapping("/{queueId}/table")
+    public QueueEntry assignTable(
+            @PathVariable Long queueId,
+            @RequestBody AssignTableRequest request) {
+
+        if (request.tableId() == null) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Table ID is required");
+        }
+
+        return queueService.assignTable(queueId, request.tableId());
+    }
     private final QueueService queueService;
 
     public QueueController(QueueService queueService) {
